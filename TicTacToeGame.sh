@@ -95,7 +95,7 @@ function playerTurnsChange(){
 function playGame(){
 	if [ $tossCheck -eq  1 ]
 	then
-		read -p "Player Enter The Position Between 0 To 8 : " positionCheck
+		read -p "Player Turns Now, Enter The Position Between 0 To 8 : " positionCheck
 		if [ "${playBoard[$positionCheck]}" == "_" -a  $positionCheck -lt 9  ] 
 		then
 	 		playBoard[$positionCheck]=$playerChoice 
@@ -103,23 +103,24 @@ function playGame(){
 			printBoard
 			playerTurnsChange 2	
 		else
-		 	echo "The Place Is Alredy Filled, Choose Another Position Or You Have Entered The Wrong Position[B"
+		 	echo -e "\nThe Place Is Alredy Filled, Choose Another Position Or You Have Entered The Wrong Position[B"
 			printBoard
 			playGame
 		fi
 	fi
-	
+	#On Computer getting its turn the computer will play like me (UC6).
 	if [ $tossCheck -eq  2 ]
 	then
-		read -p "Computer Enter The Position Between 0 To 8 : " positionCheck
-		if [ "${playBoard[$positionCheck]}" == "_" -a  $positionCheck -lt 9 ] 
+		echo -e "\nComputer Turns Now Selcting Position"
+		positionCheck=$(($RANDOM % 8 + 1))
+		if [ "${playBoard[$positionCheck]}" == "_" ] 
 		then
 		 	playBoard[$positionCheck]=$computerChoice 
 			totalMovesLeft=$(($totalMovesLeft-1))
 			printBoard
 			playerTurnsChange 1	
 		else
-		 	echo "The Place Is Already Filled Choose Another Position Or You Have Entered The Wrong Position"
+		 	echo -e "\nThe Place Is Already Filled Choose Another Position"
 			printBoard
 			playGame
 			fi
@@ -154,7 +155,7 @@ function checkBoard(){
 					esac	
 				done
 			else
-				echo "Computer With Letter $WinnerPlayer Wins The Game "
+				echo "Computer With Letter $winnerPlayer Wins The Game "
 				computerPlay=$(($RANDOM % 2 + 1))
 				if [ $computerPlay -eq 1 ]
 				then
@@ -164,9 +165,10 @@ function checkBoard(){
 					exit
 				fi
 			fi
-		elif [ $totalMovesLeft -eq 0 ]
+		elif [[ $totalMovesLeft -eq 0 ]]
 		then
-			echo -e "\nGame Ties Between The Player And Computer"
+			echo -e "\nGame Ties Between The Player And Computer The Board Resets"
+			resetBoard
 		fi		
 	fi
 }
