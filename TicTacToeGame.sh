@@ -128,7 +128,8 @@ function playGame(){
 	then
 		compPlayToWin $computerChoice
 		compPlayToWin $playerChoice		
-		checkCorner	
+		checkCorner
+		checkCenter	
 	fi	
 }
 
@@ -277,6 +278,17 @@ function checkCorner(){
 		playerTurnsChange 1
 	else
 		playBoard[${cornerLeft[$(($RANDOM % length + 1))]}]=$computerChoice
+		totalMovesLeft=$((totalMovesLeft-1))
+		printBoard
+		playerTurnsChange 1
+	fi
+}
+
+#Choice if the corners are not available then take the Centre(UC10).
+function checkCenter() {
+	if [ "${playBoard[4]}" == "_" ] 
+	then 
+		playBoard[4]=$computerChoice
 		totalMovesLeft=$((totalMovesLeft-1))
 		printBoard
 		playerTurnsChange 1
