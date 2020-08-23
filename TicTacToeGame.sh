@@ -190,7 +190,7 @@ function checkWinner(){
 	fi
 }
 
-#First thing I do is check if I can win then play that move(UC7).
+#First thing I do is check checkif I can win then play that move(UC7),check if my Opponent can win then play to block it(UC8).
 function winPlay(){
 	i1=$1
 	i2=$2
@@ -198,7 +198,7 @@ function winPlay(){
 	if [[ "${playBoard[$i1]}" == "${playBoard[$i2]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i3]}" == "_" ]]
         then
                 playBoard[$i3]=$computerChoice
-                totalMovesLeft=$(($TotalMovesLeft-1))
+                totalMovesLeft=$(($totalMovesLeft-1))
                 printBoard
                 playerTurnsChange 1
 	fi
