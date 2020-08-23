@@ -127,9 +127,11 @@ function playGame(){
 	if [ $tossCheck -eq  2 ]
 	then
 		compPlayToWin $computerChoice
-		compPlayToWin $playerChoice		
+		compPlayToWin $playerChoice
 		checkCorner
-		checkCenter	
+		checkCenter
+		checkSides
+		compRandomPlay
 	fi	
 }
 
@@ -199,7 +201,7 @@ function winPlay(){
 	i3=$3
 	checkCompWin=$4
 
-	if [[ "${playBoard[$i1]}" == "${playBoard[$i2]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i3]}" == "_" && "${playboard[$i1]}" == "$checkCompWin" ]]
+	if [[ "${playBoard[$i1]}" == "${playBoard[$i2]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i3]}" == "_" && "${playBoard[$i1]}" == "$checkCompWin" ]]
         then
                 playBoard[$i3]=$computerChoice
                 totalMovesLeft=$(($totalMovesLeft-1))
@@ -207,7 +209,7 @@ function winPlay(){
                 playerTurnsChange 1
 	fi
 
-        if [[ "${playBoard[$i1]}" == "${playBoard[$i3]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i2]}" == "_" && "${playboard[$i1]}" == "$checkCompWin" ]]
+        if [[ "${playBoard[$i1]}" == "${playBoard[$i3]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i2]}" == "_" && "${playBoard[$i1]}" == "$checkCompWin" ]]
         then
                 playBoard[$i2]=$computerChoice
                 totalMovesLeft=$(($totalMovesLeft-1))
@@ -215,7 +217,7 @@ function winPlay(){
                 playerTurnsChange 1
 	fi
         
-	if [[ "${playBoard[$i3]}" == "${playBoard[$i2]}" && "${playBoard[$i3]}" != "_" && "${playBoard[$i1]}" == "_" && "${playboard[$i2]}" == "$checkCompWin" ]]
+	if [[ "${playBoard[$i3]}" == "${playBoard[$i2]}" && "${playBoard[$i3]}" != "_" && "${playBoard[$i1]}" == "_" && "${playBoard[$i2]}" == "$checkCompWin" ]]
         then
                 playBoard[$i1]=$computerChoice
                 totalMovesLeft=$(($totalMovesLeft-1))
@@ -235,11 +237,6 @@ function compPlayToWin(){
 	winPlay 0 3 6 $checkPlayer
 	winPlay 1 4 7 $checkPlayer
 	winPlay 2 5 8 $checkPlayer
-	
-	if [ $tossCheck -eq  2 ]
-	then
-		compRandomPlay
-	fi		
 }
 
 #If neither of us are winning then checking and taking one of the available corners
@@ -261,7 +258,7 @@ function checkCorner(){
 		cornerLeft[$(($i+1))]=6
 	fi
 	 
-	if [ "${playboard[8]}" == "_" ] 
+	if [ "${playBoard[8]}" == "_" ] 
 	then 
 		cornerLeft[$(($i+1))]=8	
 	fi
@@ -289,6 +286,48 @@ function checkCenter() {
 	if [ "${playBoard[4]}" == "_" ] 
 	then 
 		playBoard[4]=$computerChoice
+		totalMovesLeft=$((totalMovesLeft-1))
+		printBoard
+		playerTurnsChange 1
+	fi
+}
+
+#Lastly any of the side if corner and centre is not available(UC11).
+function checkSides(){
+	i=0
+
+	if [ "${playBoard[0]}" == "_" ]
+	then 	
+		sidesLeft[$(($i+1))]=1
+	fi
+		
+	if [ "${playBoard[2]}" == "_" ] 
+	then 	
+		sidesLeft[$(($i+1))]=3
+	fi
+	
+	if [ "${playBoard[6]}" == "_" ]
+	then 
+		sidesLeft[$(($i+1))]=5
+	fi
+	 
+	if [ "${playBoard[8]}" == "_" ] 
+	then 
+		sidesLeft[$(($i+1))]=7	
+	fi
+
+	length=${#sidesLeft[*]}
+	if [ $length -eq 0 ]
+	then
+		return
+	elif [ $length -eq 1 ]
+	then
+		playBoard[${sidesLeft[*]}]=$computerChoice
+		totalMovesLeft=$((totalMovesLeft-1))
+		printBoard
+		playerTurnsChange 1
+	else
+		playBoard[${sidesLeft[$(($RANDOM % length + 1))]}]=$computerChoice
 		totalMovesLeft=$((totalMovesLeft-1))
 		printBoard
 		playerTurnsChange 1
