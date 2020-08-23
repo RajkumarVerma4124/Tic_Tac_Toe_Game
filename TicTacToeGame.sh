@@ -173,8 +173,18 @@ function checkBoard(){
 			fi
 		elif [[ $totalMovesLeft -eq 0 ]]
 		then
-			echo -e "\nGame Ties Between The Player And Computer The Board Resets"
-			resetBoard
+			echo -e "\nGame Ties Between The Player And Computer."
+			echo -e "\nDo You Want To Play Again"
+			while true
+			do
+				echo "1.Play Again"
+				echo "2.Exit"
+				read -p "Enter Your Choice : " choice
+				case $choice in
+				"1") resetBoard ;;	
+				"2") exit ;;
+				esac	
+				done
 		fi		
 	fi
 }
