@@ -118,7 +118,7 @@ function playGame(){
 			printBoard
 			playerTurnsChange 2	
 		else
-		 	echo -e "\nThe Place Is Alredy Filled, Choose Another Position Or You Have Entered The Wrong Position[B"
+		 	echo -e "\nThe Place Is Alredy Filled, Choose Another Position Or You Have Entered The Wrong Position"
 			printBoard
 			playGame
 		fi
@@ -126,8 +126,9 @@ function playGame(){
 	#On Computer getting its turn the computer will play like me (UC6).
 	if [ $tossCheck -eq  2 ]
 	then
-		echo -e "\nComputer Turns Now Selcting Position"
-		compPlayToWin
+		compPlayToWin $computerChoice
+		compPlayToWin $playerChoice		
+		checkCorner	
 	fi	
 }
 
@@ -195,7 +196,9 @@ function winPlay(){
 	i1=$1
 	i2=$2
 	i3=$3
-	if [[ "${playBoard[$i1]}" == "${playBoard[$i2]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i3]}" == "_" ]]
+	checkCompWin=$4
+
+	if [[ "${playBoard[$i1]}" == "${playBoard[$i2]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i3]}" == "_" && "${playboard[$i1]}" == "$checkCompWin" ]]
         then
                 playBoard[$i3]=$computerChoice
                 totalMovesLeft=$(($totalMovesLeft-1))
@@ -203,7 +206,7 @@ function winPlay(){
                 playerTurnsChange 1
 	fi
 
-        if [[ "${playBoard[$i1]}" == "${playBoard[$i3]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i2]}" == "_" ]]
+        if [[ "${playBoard[$i1]}" == "${playBoard[$i3]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i2]}" == "_" && "${playboard[$i1]}" == "$checkCompWin" ]]
         then
                 playBoard[$i2]=$computerChoice
                 totalMovesLeft=$(($totalMovesLeft-1))
@@ -211,7 +214,7 @@ function winPlay(){
                 playerTurnsChange 1
 	fi
         
-	if [[ "${playBoard[$i3]}" == "${playBoard[$i2]}" && "${playBoard[$i3]}" != "_" && "${playBoard[$i1]}" == "_" ]]
+	if [[ "${playBoard[$i3]}" == "${playBoard[$i2]}" && "${playBoard[$i3]}" != "_" && "${playBoard[$i1]}" == "_" && "${playboard[$i2]}" == "$checkCompWin" ]]
         then
                 playBoard[$i1]=$computerChoice
                 totalMovesLeft=$(($totalMovesLeft-1))
@@ -221,20 +224,63 @@ function winPlay(){
 }
 
 #Checking Possibility For Winning Positions For Computer
-function compPlayToWin(){	
-	winPlay 0 1 2
-	winPlay 3 4 5
-	winPlay 6 7 8
-	winPlay 0 4 8
-	winPlay 2 4 6
-	winPlay 0 3 6
-	winPlay 1 4 7
-	winPlay 2 5 8
+function compPlayToWin(){
+	checkPlayer=$1	
+	winPlay 0 1 2 $checkPlayer
+	winPlay 3 4 5 $checkPlayer
+	winPlay 6 7 8 $checkPlayer
+	winPlay 0 4 8 $checkPlayer
+	winPlay 2 4 6 $checkPlayer
+	winPlay 0 3 6 $checkPlayer
+	winPlay 1 4 7 $checkPlayer
+	winPlay 2 5 8 $checkPlayer
 	
 	if [ $tossCheck -eq  2 ]
 	then
 		compRandomPlay
 	fi		
+}
+
+#If neither of us are winning then checking and taking one of the available corners
+function checkCorner(){
+	i=0
+
+	if [ "${playBoard[0]}" == "_" ]
+	then 	
+		cornerLeft[$(($i+1))]=0
+	fi
+		
+	if [ "${playBoard[2]}" == "_" ] 
+	then 	
+		cornerLeft[$(($i+1))]=2
+	fi
+	
+	if [ "${playBoard[6]}" == "_" ]
+	then 
+		cornerLeft[$(($i+1))]=6
+	fi
+	 
+	if [ "${playboard[8]}" == "_" ] 
+	then 
+		cornerLeft[$(($i+1))]=8	
+	fi
+
+	length=${#cornerLeft[*]}
+	if [ $length -eq 0 ]
+	then
+		return
+	elif [ $length -eq 1 ]
+	then
+		playBoard[${cornerLeft[*]}]=$computerChoice
+		totalMovesLeft=$((totalMovesLeft-1))
+		printBoard
+		playerTurnsChange 1
+	else
+		playBoard[${cornerLeft[$(($RANDOM % length + 1))]}]=$computerChoice
+		totalMovesLeft=$((totalMovesLeft-1))
+		printBoard
+		playerTurnsChange 1
+	fi
 }
 
 #Main Code
