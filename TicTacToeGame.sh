@@ -150,16 +150,7 @@ function checkBoard(){
 			then
 				echo -e "\nPlayer With Letter $winnerPlayer Wins The Game "
 				echo -e "\nDo You Want To Play Again"
-				while true
-				do
-					echo "1.Play Again"
-					echo "2.Exit"
-					read -p "Enter Your Choice : " choice
-					case $choice in
-					"1") resetBoard ;;	
-					"2") exit ;;
-					esac	
-				done
+				playNextGame	
 			else
 				echo "Computer With Letter $winnerPlayer Wins The Game "
 				computerPlay=$(($RANDOM % 2 + 1))
@@ -175,18 +166,23 @@ function checkBoard(){
 		then
 			echo -e "\nGame Ties Between The Player And Computer."
 			echo -e "\nDo You Want To Play Again"
-			while true
-			do
-				echo "1.Play Again"
-				echo "2.Exit"
-				read -p "Enter Your Choice : " choice
-				case $choice in
-				"1") resetBoard ;;	
-				"2") exit ;;
-				esac	
-				done
+			playNextGame
 		fi		
 	fi
+}
+
+#Function To Define That Player Want To Play Next Game Or Not
+function playNextGame(){
+	while true
+	do
+		echo "1.Play Again"
+		echo "2.Exit"
+		read -p "Enter Your Choice : " choice
+		case $choice in
+		"1") resetBoard ;;	
+		"2") exit ;;
+		esac	
+	done
 }
 
 #Checking The Winner After Every Move(UC5).
