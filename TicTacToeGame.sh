@@ -91,21 +91,6 @@ function playerTurnsChange(){
 	fi
 }
 
-function compRandomPlay(){
-	positionCheck=$(($RANDOM % 8 + 1))
-	if [ "${playBoard[$positionCheck]}" == "_" ] 
-	then
-	 	playBoard[$positionCheck]=$computerChoice 
-		totalMovesLeft=$(($totalMovesLeft-1))
-		printBoard
-		playerTurnsChange 1	
-	else
-	 	echo -e "\nThe Place Is Already Filled Choose Another Position"
-		printBoard
-		playGame
-	fi
-}
-
 #To Play The Game Between Computer And Player
 function playGame(){
 	if [ $tossCheck -eq  1 ]
@@ -131,7 +116,6 @@ function playGame(){
 		checkCorner
 		checkCenter
 		checkSides
-		compRandomPlay
 	fi	
 }
 
@@ -200,6 +184,16 @@ function checkWinner(){
 	fi
 }
 
+#Passing The Winning Or Blocking Position 
+function playBoardPosition(){
+		i=$1
+                playBoard[$i]=$computerChoice
+                totalMovesLeft=$(($totalMovesLeft-1))
+                printBoard
+                playerTurnsChange 1
+
+}
+
 #First thing I do is check checkif I can win then play that move(UC7),check if my Opponent can win then play to block it(UC8).
 function winPlay(){
 	i1=$1
@@ -209,27 +203,18 @@ function winPlay(){
 
 	if [[ "${playBoard[$i1]}" == "${playBoard[$i2]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i3]}" == "_" && "${playBoard[$i1]}" == "$checkCompWin" ]]
         then
-                playBoard[$i3]=$computerChoice
-                totalMovesLeft=$(($totalMovesLeft-1))
-                printBoard
-                playerTurnsChange 1
-	fi
+		playBoardPosition $i3
+          	fi
 
         if [[ "${playBoard[$i1]}" == "${playBoard[$i3]}" && "${playBoard[$i1]}" != "_" && "${playBoard[$i2]}" == "_" && "${playBoard[$i1]}" == "$checkCompWin" ]]
         then
-                playBoard[$i2]=$computerChoice
-                totalMovesLeft=$(($totalMovesLeft-1))
-                printBoard
-                playerTurnsChange 1
-	fi
+		playBoardPosition $i2
+          	fi
         
 	if [[ "${playBoard[$i3]}" == "${playBoard[$i2]}" && "${playBoard[$i3]}" != "_" && "${playBoard[$i1]}" == "_" && "${playBoard[$i2]}" == "$checkCompWin" ]]
         then
-                playBoard[$i1]=$computerChoice
-                totalMovesLeft=$(($totalMovesLeft-1))
-                printBoard
-                playerTurnsChange 1
-        fi
+		playBoardPosition $i1
+          fi
 }
 
 #Checking Possibility For Winning Positions For Computer
@@ -302,22 +287,22 @@ function checkCenter() {
 function checkSides(){
 	i=0
 
-	if [ "${playBoard[0]}" == "_" ]
+	if [ "${playBoard[1]}" == "_" ]
 	then 	
 		sidesLeft[$(($i+1))]=1
 	fi
 		
-	if [ "${playBoard[2]}" == "_" ] 
+	if [ "${playBoard[3]}" == "_" ] 
 	then 	
 		sidesLeft[$(($i+1))]=3
 	fi
 	
-	if [ "${playBoard[6]}" == "_" ]
+	if [ "${playBoard[5]}" == "_" ]
 	then 
 		sidesLeft[$(($i+1))]=5
 	fi
 	 
-	if [ "${playBoard[8]}" == "_" ] 
+	if [ "${playBoard[7]}" == "_" ] 
 	then 
 		sidesLeft[$(($i+1))]=7	
 	fi
@@ -342,5 +327,6 @@ function checkSides(){
 
 #Main Code
 resetBoard
+
 
 
